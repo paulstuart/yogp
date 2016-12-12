@@ -40,7 +40,6 @@ func bucketEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func webServer(port int) {
-	makeCert()
 	checkCert()
 	addr := fmt.Sprintf(":%d", port)
 	s := &http.Server{

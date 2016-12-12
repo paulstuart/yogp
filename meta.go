@@ -106,3 +106,15 @@ func creds(projID string) {
 	// Use the client.
 	_ = client
 }
+
+/*
+func hello() {
+	bucketName := _projID + ".appspot.com"
+	readOut(bucketName, "hello.txt")
+}
+
+func sayWhat() {
+	gLog("hey man")
+	logReader(_projID, _logName, os.Stdout)
+}
+*/

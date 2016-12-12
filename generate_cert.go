@@ -28,6 +28,7 @@ import (
 var (
 	certFile   = "cert.pem"
 	keyFile    = "key.pem"
+	show       = flag.Bool("version", false, "Show version and exit")
 	certs      = flag.Bool("generate", false, "Generate new certificates and exit")
 	host       = flag.String("host", "", "Comma-separated hostnames and IPs to generate a certificate for")
 	cName      = flag.String("cert", certFile, "Certificate file name")
@@ -152,36 +153,22 @@ func generateCert(priv interface{}, hostName, certName, keyName string) error {
 
 	certOut, err := os.Create(certName)
 	if err != nil {
-		log.Fatalf("failed to open cert.pem for writing: %s", err)
+		log.Fatalf("failed to open %s for writing: %s", certName, err)
+		return err
 	}
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 	certOut.Close()
-	log.Print("written cert.pem\n")
+	log.Printf("written: %s\n", certName)
 
 	keyOut, err := os.OpenFile(keyName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Print("failed to open key.pem for writing:", err)
+		log.Printf("failed to open %s for writing: %s\n", keyName, err)
 		return err
 	}
 	pem.Encode(keyOut, pemBlockForKey(priv))
 	keyOut.Close()
-	log.Print("written key.pem\n")
+	log.Printf("written: %s\n", keyName)
 	return nil
-}
-
-func makeCert() {
-	log.Println("parse flags")
-	flag.Parse()
-	if *certs {
-		log.Println("gen certs")
-		host, err := os.Hostname()
-		if err != nil {
-			log.Fatal("hostname error:", err)
-		}
-		certCmd(host, *cName, *kName)
-		os.Exit(0)
-	}
-	log.Println("parsed")
 }
 
 func checkCert() {
@@ -192,4 +179,23 @@ func checkCert() {
 		}
 		certCmd(host, certFile, keyFile)
 	}
+}
+
+func options() {
+	log.Println("parse flags")
+	flag.Parse()
+	if *show {
+		fmt.Println("version:", version)
+		os.Exit(0)
+	}
+	if *certs {
+		log.Println("gen certs")
+		host, err := os.Hostname()
+		if err != nil {
+			log.Fatal("hostname error:", err)
+		}
+		certCmd(host, *cName, *kName)
+		os.Exit(0)
+	}
+	log.Println("parsed")
 }

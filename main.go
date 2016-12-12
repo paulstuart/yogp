@@ -1,6 +1,6 @@
 package main
 
-import "os"
+import "log"
 
 var (
 	_projID  = "udy-demo"
@@ -8,7 +8,10 @@ var (
 	lggr     = &gLogger{}
 )
 
-func init() {
+const version = 0.01
+
+func login() {
+	log.Println("logging in")
 	creds(_projID)
 	var err error
 	lggr, err = newClient(_projID)
@@ -21,21 +24,8 @@ func gLog(msg string) {
 	lggr.writeEntry(_logName, msg)
 }
 
-func hello() {
-	bucketName := _projID + ".appspot.com"
-	readOut(bucketName, "hello.txt")
-}
-
-func sayWhat() {
-	gLog("hey man")
-	logReader(_projID, _logName, os.Stdout)
-}
-
 func main() {
-	/*
-		sayWhat()
-		return
-		hello()
-	*/
+	options()
+	login()
 	webServer(443)
 }
