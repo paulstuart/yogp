@@ -4,6 +4,7 @@ DIR := ${CURDIR}
 PKG = pstuart/yogp-pkg 
 CREDS=$(shell ls *.json | head -1)
 SHARE=$(DIR)/common
+IMAGE = gcr.io/udy-demo/yocp-pkg
 
 ################################################
 
@@ -32,6 +33,18 @@ run:
     -e "PATH=/:/bin:/usr/bin" \
     -v $(DIR)/$(CREDS):/$(CREDS) \
     $(PKG)
+
+bash:
+	docker run -p 8443:443 \
+	-e "GOOGLE_APPLICATION_CREDENTIALS=$(CREDS)" \
+    -e "PATH=/:/bin:/usr/bin" \
+    -v $(DIR)/$(CREDS):/$(CREDS) \
+	--entrypoint bash \
+    $(PKG)
+
+tag:
+	docker tag $(PKG) $(IMAGE)
+	gcloud docker -- push $(IMAGE)
 
 test:
 	sudo "GOOGLE_APPLICATION_CREDENTIALS=$(CREDS)" ./yogp

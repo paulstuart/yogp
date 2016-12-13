@@ -1,6 +1,8 @@
-FROM alpine:latest
+FROM pstuart/alpine:latest
 
 RUN apk add --no-cache ca-certificates && update-ca-certificates 
+
+RUN echo 'export PATH=/:$PATH' >> /etc/profile
 
 WORKDIR /
 
