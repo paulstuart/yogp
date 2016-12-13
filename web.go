@@ -5,9 +5,20 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"strings"
 )
+
+func myIP() string {
+	addrs, _ := net.InterfaceAddrs()
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !strings.HasPrefix(ipnet.String(), "127.") && strings.Index(ipnet.String(), ":") == -1 {
+			return strings.Split(ipnet.String(), "/")[0]
+		}
+	}
+	return ""
+}
 
 func logWrite(w http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
@@ -52,12 +63,14 @@ func webServer(port int) {
 	http.HandleFunc("/log/read", readLogs)
 	http.HandleFunc("/log/write", logWrite)
 	http.HandleFunc("/bucket/event", bucketEvent)
-	log.Println("Start server --", addr)
-	gLog("Start server -- " + addr)
+	log.Println("Start server --", localIP+addr)
+	gLog("Server IP -- " + localIP)
+	gLog("Start server -- " + localIP + addr)
 	err := s.ListenAndServeTLS(certFile, keyFile)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+	gLog("Stop server -- " + localIP + addr)
 }
 
 func readPage(url string) (string, error) {
