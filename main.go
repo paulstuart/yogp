@@ -36,7 +36,7 @@ func init() {
 	go func() {
 		for sig := range c {
 			gLog("Got signal:" + sig.String())
-			//os.Exit(1)
+			os.Exit(1)
 		}
 	}()
 }

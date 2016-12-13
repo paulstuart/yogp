@@ -24,8 +24,7 @@ docker:
 	docker run -it -P -v /var/run/docker.sock:/var/run/docker.sock -v $(DIR):/meta pstuart/alpine-docker bash
 
 builder:
-	cd build
-	docker build -t $(BUILD) .
+	$(MAKE) -C build docker
 
 run:
 	docker run -p 8443:443 \

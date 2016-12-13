@@ -10,4 +10,4 @@ COPY Makefile .
 
 RUN mkdir /shared
 
-CMD make build
+#CMD make build
